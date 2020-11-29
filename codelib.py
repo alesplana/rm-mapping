@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 
 
-def convert_csv(old_file, new_file):
+def convert_csv(old_file):
     old_csv = pd.read_csv(old_file, names=["x", "y", "wave", "intensity"])
     x_unq = old_csv.x.unique().astype('int')  # read unique x values
     y_unq = old_csv.y.unique().astype('int')  # read unique y values
@@ -47,5 +47,4 @@ def convert_csv(old_file, new_file):
 
     # merge new dataframes
     new_csv_final = pd.merge(xy_df, new_df, on=['xy_id'])
-    new_csv_final.to_csv(new_file, index=True)
-
+    return new_csv_final
