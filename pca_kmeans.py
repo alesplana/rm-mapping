@@ -32,30 +32,49 @@ def pca_initial(data):
     expl_var_1 = X1.explained_variance_ratio_
 
     # create scree plot
-    '''
-    fig, ax = plt.subplots(nrows=1, ncols=1, figsize=(5, 4))
-    ax.bar(range(20), expl_var_1, label="Explained Variance %", color='blue')
-    ax.plot(np.cumsum(expl_var_1), '-o', label='Cumulative variance %', color='green')
-    ax.set_xlabel("PC number")
-    ax.legend()
+
+    fig = plt.figure(dpi=100)
+    plt.bar(range(20), expl_var_1, label="Explained Variance %", color='blue', figure=fig)
+    plt.plot(np.cumsum(expl_var_1), '-o', label='Cumulative variance %', color='green', figure=fig)
+    plt.xlabel('PC Number')
+    plt.legend()
     '''
     fig = matplotlib.figure.Figure(figsize=(5, 4), dpi=100)
     fig.add_subplot(111).bar(range(20), expl_var_1, label="Explained Variance %", color='blue')
     fig.add_subplot(111).plot(np.cumsum(expl_var_1), '-o', label='Cumulative variance %', color='green')
     fig.add_subplot(111).set_xlabel("PC number")
     fig.add_subplot(111).legend()
-
+    '''
     return fig
 
-'''
-def pca_final(data_, ncomp):
+
+def pca_final(data, ncomp):
+
+    # read spectra id
+    lab = data.values[:, 3].astype('uint8')
+
+    # Read the features
+    feat = (data.values[:,4:]).astype('float32')
+
+    # Scale the features to have zero mean and standard devisation of 1
+    # This is important when correlating data with very different variances
+    nfeat1 = StandardScaler().fit_transform(feat)
+
     skpca1 = sk_pca(n_components=ncomp)
+
     # Transform on the scaled features
     Xt1 = skpca1.fit_transform(nfeat1)
     scores = pd.DataFrame(Xt1)
-    return scores
 
+    if ncomp == 2:
+        fig2 = plt.figure(dpi=100)
+        plt.scatter(scores[0],scores[1], figure=fig2)
+        plt.xlabel("PC 1")
+        plt.ylabel("PC 2")
 
+    return scores, fig2
+
+'''
 km_res = KMeans(n_clusters=2).fit(scores)
 clusters = km_res.cluster_centers_
 

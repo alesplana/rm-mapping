@@ -9,12 +9,6 @@ def show_fig(fig):
     sg.theme('SystemDefault')
     matplotlib.use('TkAgg')
 
-    '''
-    fig = matplotlib.figure.Figure(figsize=(5, 4), dpi=100)
-    t = np.arange(0, 3, .01)
-    fig.add_subplot(111).plot(t, 2 * np.sin(2 * np.pi * t))
-    '''
-
     def draw_figure(canvas, figure):
         figure_canvas_agg = FigureCanvasTkAgg(figure, canvas)
         figure_canvas_agg.draw()
@@ -29,6 +23,7 @@ def show_fig(fig):
 
     # add the plot to the window
     fig_canvas_agg = draw_figure(fig_window['-CANVAS-'].TKCanvas, fig)
+
     while True:
         event, values = fig_window.read()
         if event == sg.WIN_CLOSED:
