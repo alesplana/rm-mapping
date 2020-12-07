@@ -1,7 +1,7 @@
 import PySimpleGUI as sg
 import os
 import threading
-from codelib import convert_csv
+from filehndl import convert_csv
 from mpfigshow import show_fig
 from pca_kmeans import pca_initial
 from pca_kmeans import pca_final
@@ -14,10 +14,15 @@ head2Font = ('Helvetica', 12)
 
 sg.set_options(font=('Helvetica', 11))
 
-def open_and_convert(window):  # worker thread
+
+def open_and_convert(window):  # worker thread convert csv
     global new_csv
-    new_csv = convert_csv(values['-DIR-'])
-    window.write_event_value('-THREAD-', "** DONE **")
+    new_csv, stat = convert_csv(values['-DIR-'])
+    if stat == 0:
+        window.write_event_value('-THREAD-', "** DONE **")
+    elif stat == 1:
+        window.write_event_value('-THREAD-', "Error 1")
+        print('Invalid File')
 
 
 layout = [[sg.Text('STEP 1: File processing', font=headFont)],
@@ -44,6 +49,7 @@ layout = [[sg.Text('STEP 1: File processing', font=headFont)],
            sg.Button('Open Fig', key='_FIG_OPEN2_', disabled=True, size=(10, 1))],
           [sg.Text('_' * 100, justification='center', text_color='gray', size=(100, 2))],  # horizontal separator
           [sg.Text('STEP 3: Cluster using K-Means', font=headFont)],
+
           [sg.Button('Exit')], ]
 
 main_window = sg.Window('EZ PCA KMeans Processor', layout, grab_anywhere=False, size=(500, 500),
@@ -74,10 +80,12 @@ while True:
         # new_csv = convert_csv(values['-DIR-'])
         # save_handl = True
         threading.Thread(target=open_and_convert, args=(main_window,), daemon=True).start()
-    if event == '-THREAD-':
+    if event == '-THREAD-' and values['-THREAD-'] == "** DONE **":
         save_handl = True
         main_window['_PCA1_'].update(disabled=False)
         main_window['_PCA2_'].update(disabled=False)
+    if event == '-THREAD-' and values['-THREAD-'] == "Error 1":
+        sg.popup_ok('Invalid File!', font=headFont)
     if event == '_PCA1_':
         pca1_fig = pca_initial(new_csv)
         main_window['_FIG_OPEN1_'].update(disabled=False)
