@@ -35,7 +35,7 @@ def pca_initial(data): # Initial PCA function
 
     fig = plt.figure(dpi=100)
     plt.bar(range(20), expl_var_1, label="Explained Variance %", color='blue', figure=fig)
-    plt.xticks(np.arange(len(cl1_expl_var_1)), np.arange(1, len(cl1_expl_var_1) + 1))
+    plt.xticks(np.arange(len(expl_var_1)), np.arange(1, len(expl_var_1) + 1))
     plt.plot(np.cumsum(expl_var_1), '-o', label='Cumulative variance %', color='green', figure=fig)
     plt.xlabel('PC Number')
     plt.legend()
