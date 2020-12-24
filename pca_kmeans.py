@@ -11,7 +11,7 @@ from matplotlib import colors as c
 import matplotlib
 
 
-def pca_initial(data):
+def pca_initial(data): # Initial PCA function
 
     # read spectra id
     lab = data.values[:, 3].astype('uint8')
@@ -35,6 +35,7 @@ def pca_initial(data):
 
     fig = plt.figure(dpi=100)
     plt.bar(range(20), expl_var_1, label="Explained Variance %", color='blue', figure=fig)
+    plt.xticks(np.arange(len(cl1_expl_var_1)), np.arange(1, len(cl1_expl_var_1) + 1))
     plt.plot(np.cumsum(expl_var_1), '-o', label='Cumulative variance %', color='green', figure=fig)
     plt.xlabel('PC Number')
     plt.legend()
@@ -48,7 +49,7 @@ def pca_initial(data):
     return fig
 
 
-def pca_final(data, ncomp):
+def pca_final(data, ncomp): # PCA fitting with scores as result
 
     # read spectra id
     lab = data.values[:, 3].astype('uint8')

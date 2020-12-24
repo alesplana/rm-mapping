@@ -7,17 +7,19 @@ return values [new_csv_final, stat]
 new_csv_final - pandas dataframe
 stat - integer (0 - ok, 1 - error)
 '''
+
+
 def convert_csv(old_file):
     stat = 0
     test_1 = pd.Index(['#X', 'Unnamed: 1', '#Y', 'Unnamed: 3', '#Wave', 'Unnamed: 5',
-                       '#Intensity']) # original file
+                       '#Intensity'])  # original file
 
     test_csv = pd.read_csv(old_file, sep='\t', header=0)
     test_col = test_csv.columns
 
     try:
         test1 = (test_col == test_1).all()
-        test2 = test_csv.iloc[:,4:7].mean().isna().all()
+        test2 = test_csv.iloc[:, 4:7].mean().isna().all()
     except ValueError:
         print('Invalid File')
         stat = 1
@@ -60,8 +62,10 @@ def convert_csv(old_file):
         rebuild_csv = {}
 
         for i in range(len(old_csv)):
-            query_xy = old_csv.iloc[i].x.astype('float').astype('str') + 'x' + old_csv.iloc[i].y.astype('float').astype('str')
-            rebuild_csv[i] = {'xy_id': xy_df.loc[query_xy].xy_id.astype('int'), 'wn_id': wn_df.loc[old_csv.iloc[i].wave].wn_id,
+            query_xy = old_csv.iloc[i].x.astype('float').astype('str') + 'x' + old_csv.iloc[i].y.astype('float').astype(
+                'str')
+            rebuild_csv[i] = {'xy_id': xy_df.loc[query_xy].xy_id.astype('int'),
+                              'wn_id': wn_df.loc[old_csv.iloc[i].wave].wn_id,
                               'intensity': old_csv.iloc[i].intensity}
 
         newdata_df = pd.DataFrame.from_dict(rebuild_csv, orient='index', columns=['xy_id', 'wn_id', 'intensity'])
@@ -73,7 +77,7 @@ def convert_csv(old_file):
         # merge new dataframes
         new_csv_final = pd.merge(xy_df, new_df, on=['xy_id'])
         return new_csv_final, stat
-    elif not (test_col == test_1).all() or test_csv.iloc[:,4:7].mean().notna().all():
+    elif not (test_col == test_1).all() or test_csv.iloc[:, 4:7].mean().notna().all():
         stat = 0
         new_csv_final = {}
         return new_csv_final, stat

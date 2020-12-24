@@ -49,7 +49,8 @@ layout = [[sg.Text('STEP 1: File processing', font=headFont)],
            sg.Button('Open Fig', key='_FIG_OPEN2_', disabled=True, size=(10, 1))],
           [sg.Text('_' * 100, justification='center', text_color='gray', size=(100, 2))],  # horizontal separator
           [sg.Text('STEP 3: Cluster using K-Means', font=headFont)],
-
+          [sg.Button('Run K-Means', key='-KMEANS-', size=(15, 1), disabled=True, button_color=('white', 'green')),
+           sg.Button('Open Clustered Figure', key='_FIG_OPEN3_', disabled=True, size=(20, 1))],
           [sg.Button('Exit')], ]
 
 main_window = sg.Window('EZ PCA KMeans Processor', layout, grab_anywhere=False, size=(500, 500),
@@ -93,6 +94,9 @@ while True:
         scores, pca2_fig = pca_final(new_csv, values['_NCOM_'])
         main_window['_FIG_OPEN2_'].update(disabled=False)
         main_window['_FIG_OPEN1_'].update(disabled=True)
+        main_window['-KMEANS-'].update(disabled=False)
+#    if event == '-KMEANS-':
+
     if event == '_SAVECSV_':
         new_csv.to_csv(values['_PCSV_'])
     if event == '_FIG_OPEN1_':
@@ -101,7 +105,8 @@ while True:
     if event == '_FIG_OPEN2_':
         pca2_fig.show()
         # show_fig(pca2_fig)
-
+    if event == '_FIG_OPEN3_':
+        km_fig.show()
         # In older code you'll find it written using FindElement or Element
         # window.FindElement('-OUTPUT-').Update(values['-IN-'])
         # A shortened version of this update can be written without the ".Update"
