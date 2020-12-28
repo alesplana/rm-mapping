@@ -75,6 +75,36 @@ def pca_final(data, ncomp): # PCA fitting with scores as result
 
     return scores, fig2
 
+
+def cluster_variance(data_):
+    n = 10
+    variances = []
+    kmeans = []
+    outputs = []
+    K = [i for i in range(1, n + 1)]
+
+    for i in range(1, n + 1):
+        variance = 0
+        model = KMeans(n_clusters=i, random_state=82, verbose=0).fit(data_)
+        kmeans.append(model)
+        variances.append(model.inertia_)
+    # variances,K,n=cluster_variance(10)
+
+    plt.plot(K, variances)
+    plt.ylabel("Inertia ( Total Distance )")
+    plt.xlabel("K Value")
+    plt.xticks([i for i in range(1, n + 1)])
+    plt.show()
+
+
+def kmeans_(k, data):
+    km_res = KMeans(n_clusters=k).fit(data)
+    y_km = km_res.labels_
+    clusters = km_res.cluster_centers_
+
+    result = pd.DataFrame(y_km)
+
+    return result, clusters
 '''
 km_res = KMeans(n_clusters=2).fit(scores)
 clusters = km_res.cluster_centers_
