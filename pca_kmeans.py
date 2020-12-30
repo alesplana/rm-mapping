@@ -48,6 +48,43 @@ def pca_initial(data): # Initial PCA function
     '''
     return fig
 
+def pca_initial_(data): # Initial PCA function (no standardscaler)
+
+    # read spectra id
+    lab = data.values[:, 3].astype('uint8')
+
+    # Read the features
+    feat = (data.values[:,4:]).astype('float32')
+
+
+    # Initialise
+    skpca1 = sk_pca(n_components=20)
+
+    # Scale the features to have zero mean and standard devisation of 1
+    # This is important when correlating data with very different variances
+    # nfeat1 = StandardScaler().fit_transform(feat)
+
+    # Fit the spectral data and extract the explained variance ratio
+    X1 = skpca1.fit(feat)
+    expl_var_1 = X1.explained_variance_ratio_
+
+    # create scree plot
+
+    fig = plt.figure(dpi=100)
+    plt.bar(range(20), expl_var_1, label="Explained Variance %", color='blue', figure=fig)
+    plt.xticks(np.arange(len(expl_var_1)), np.arange(1, len(expl_var_1) + 1))
+    plt.plot(np.cumsum(expl_var_1), '-o', label='Cumulative variance %', color='green', figure=fig)
+    plt.xlabel('PC Number')
+    plt.legend()
+    '''
+    fig = matplotlib.figure.Figure(figsize=(5, 4), dpi=100)
+    fig.add_subplot(111).bar(range(20), expl_var_1, label="Explained Variance %", color='blue')
+    fig.add_subplot(111).plot(np.cumsum(expl_var_1), '-o', label='Cumulative variance %', color='green')
+    fig.add_subplot(111).set_xlabel("PC number")
+    fig.add_subplot(111).legend()
+    '''
+    return fig
+
 
 def pca_final(data, ncomp): # PCA fitting with scores as result
 
@@ -67,13 +104,27 @@ def pca_final(data, ncomp): # PCA fitting with scores as result
     Xt1 = skpca1.fit_transform(nfeat1)
     scores = pd.DataFrame(Xt1)
 
-    if ncomp == 2:
-        fig2 = plt.figure(dpi=100)
-        plt.scatter(scores[0],scores[1], figure=fig2)
-        plt.xlabel("PC 1")
-        plt.ylabel("PC 2")
+    return scores
 
-    return scores, fig2
+def pca_final_(data, ncomp): # PCA fitting with scores as result (no standardscaler)
+
+    # read spectra id
+    lab = data.values[:, 3].astype('uint8')
+
+    # Read the features
+    feat = (data.values[:,4:]).astype('float32')
+
+    # Scale the features to have zero mean and standard devisation of 1
+    # This is important when correlating data with very different variances
+    # nfeat1 = StandardScaler().fit_transform(feat)
+
+    skpca1 = sk_pca(n_components=ncomp)
+
+    # Transform on the scaled features
+    Xt1 = skpca1.fit_transform(feat)
+    scores = pd.DataFrame(Xt1)
+
+    return scores
 
 
 def cluster_variance(data_):
@@ -136,6 +187,7 @@ Y.sort()
 cMap = c.ListedColormap(['gray', 'blue'])
 plt.pcolormesh(X, Y, grid_base, shading='auto', cmap=cMap, alpha=0.5)
 plt.gca().set_aspect('equal')
+plt.gca().invert_yaxis()
 plt.savefig('test.png', transparent=True)
 
 '''

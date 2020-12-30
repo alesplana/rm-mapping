@@ -46,7 +46,7 @@ layout = [[sg.Text('STEP 1: File processing', font=headFont)],
           [sg.Text('Number of Principal Components:', font=head2Font, size=(25, 1)),
            sg.Combo(list(range(2, 4)), size=(5, 2), key='_NCOM_', enable_events=True),
            sg.Button('Run PCA', button_color=('white', 'green'), key='_PCA2_', size=(15, 1), disabled=True),
-           sg.Button('Open Fig', key='_FIG_OPEN2_', disabled=True, size=(10, 1))],
+            sg.Button('Open Fig', key='_FIG_OPEN2_', disabled=True, size=(10, 1), visible=False)],
           [sg.Text('_' * 100, justification='center', text_color='gray', size=(100, 2))],  # horizontal separator
           [sg.Text('STEP 3: Cluster using K-Means', font=headFont)],
           [sg.Button('Run K-Means', key='-KMEANS-', size=(15, 1), disabled=True, button_color=('white', 'green')),
@@ -91,7 +91,7 @@ while True:
         pca1_fig = pca_initial(new_csv)
         main_window['_FIG_OPEN1_'].update(disabled=False)
     if event == '_PCA2_':
-        scores, pca2_fig = pca_final(new_csv, values['_NCOM_'])
+        scores = pca_final(new_csv, values['_NCOM_'])
         main_window['_FIG_OPEN2_'].update(disabled=False)
         main_window['_FIG_OPEN1_'].update(disabled=True)
         main_window['-KMEANS-'].update(disabled=False)
