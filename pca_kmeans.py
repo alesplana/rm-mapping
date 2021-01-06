@@ -1,29 +1,25 @@
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-from mpl_toolkits.mplot3d import Axes3D
 
-from scipy.signal import savgol_filter
 from sklearn.decomposition import PCA as sk_pca
 from sklearn.preprocessing import StandardScaler
 from sklearn.cluster import KMeans
 from matplotlib import colors as c
-import matplotlib
 
 
-def pca_initial(data): # Initial PCA function
+def pca_initial(data):  # Initial PCA function
 
     # read spectra id
     lab = data.values[:, 3].astype('uint8')
 
     # Read the features
-    feat = (data.values[:,4:]).astype('float32')
-
+    feat = (data.values[:, 4:]).astype('float32')
 
     # Initialise
     skpca1 = sk_pca(n_components=20)
 
-    # Scale the features to have zero mean and standard devisation of 1
+    # Scale the features to have zero mean and standard deviation of 1
     # This is important when correlating data with very different variances
     nfeat1 = StandardScaler().fit_transform(feat)
 
@@ -48,19 +44,19 @@ def pca_initial(data): # Initial PCA function
     '''
     return fig
 
-def pca_initial_(data): # Initial PCA function (no standardscaler)
+
+def pca_initial_(data):  # Initial PCA function (no standardscaler)
 
     # read spectra id
     lab = data.values[:, 3].astype('uint8')
 
     # Read the features
-    feat = (data.values[:,4:]).astype('float32')
-
+    feat = (data.values[:, 4:]).astype('float32')
 
     # Initialise
     skpca1 = sk_pca(n_components=20)
 
-    # Scale the features to have zero mean and standard devisation of 1
+    # Scale the features to have zero mean and standard deviation of 1
     # This is important when correlating data with very different variances
     # nfeat1 = StandardScaler().fit_transform(feat)
 
@@ -86,13 +82,13 @@ def pca_initial_(data): # Initial PCA function (no standardscaler)
     return fig
 
 
-def pca_final(data, ncomp): # PCA fitting with scores as result
+def pca_final(data, ncomp):  # PCA fitting with scores as result
 
     # read spectra id
     lab = data.values[:, 3].astype('uint8')
 
     # Read the features
-    feat = (data.values[:,4:]).astype('float32')
+    feat = (data.values[:, 4:]).astype('float32')
 
     # Scale the features to have zero mean and standard devisation of 1
     # This is important when correlating data with very different variances
@@ -106,13 +102,14 @@ def pca_final(data, ncomp): # PCA fitting with scores as result
 
     return scores
 
-def pca_final_(data, ncomp): # PCA fitting with scores as result (no standardscaler)
+
+def pca_final_(data, ncomp):  # PCA fitting with scores as result (no standardscaler)
 
     # read spectra id
     lab = data.values[:, 3].astype('uint8')
 
     # Read the features
-    feat = (data.values[:,4:]).astype('float32')
+    feat = (data.values[:, 4:]).astype('float32')
 
     # Scale the features to have zero mean and standard devisation of 1
     # This is important when correlating data with very different variances
@@ -156,6 +153,31 @@ def kmeans_(k, data):
     result = pd.DataFrame(y_km)
 
     return result, clusters
+
+
+def gen_map(data, res_, cmap):
+    coord = pd.DataFrame(data[data.columns[1:3]])
+    coord_cluster = coord.join(res_)
+    coord_cluster.columns = ['x', 'y', 'c']
+
+    grid_base = coord_cluster.pivot('y', 'x').values
+
+    X = coord_cluster.x.unique()
+    X.sort()
+
+    Y = coord_cluster.y.unique()
+    Y.sort()
+
+    cMap = c.ListedColormap(cmap)
+    fig = plt.figure(dpi=100)
+    plt.pcolormesh(X, Y, grid_base, shading='auto', cmap=cMap, alpha=0.5, figure=fig)
+    plt.gca().set_aspect('equal')
+    plt.gca().invert_yaxis()
+    # plt.savefig('test.png', transparent=True)
+
+    return fig
+
+
 '''
 km_res = KMeans(n_clusters=2).fit(scores)
 clusters = km_res.cluster_centers_
