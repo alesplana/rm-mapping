@@ -1,3 +1,18 @@
+# The functions pca_initial, pca_initial_, pca_final, and pca_final_ are adapted
+# from a post by Daniel Pelliccia here:
+# https://nirpyresearch.com/classification-nir-spectra-principal-component-analysis-python/
+#
+# Retrieved in December 2020 and is licensed under Creative Commons Attribution 4.0
+# International License. (https://creativecommons.org/licenses/by/4.0/)
+#
+#
+# The function cluster_variance is adapted from a post by Çağrı Aydoğdu here:
+# https://medium.com/analytics-vidhya/choosing-the-best-k-value-for-k-means-clustering-d8b4616f8b86
+#
+# Retrieved in December 2020.
+
+
+
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
