@@ -12,7 +12,6 @@
 # Retrieved in December 2020.
 
 
-
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
@@ -191,6 +190,13 @@ def gen_map(data, res_, cmap):
     # plt.savefig('test.png', transparent=True)
 
     return fig
+
+def res_vbose(data, res_,):
+    res_.columns = ['cluster']
+    coord = pd.DataFrame(data)
+    coord_cluster_ = coord.join(res_)
+
+    return coord_cluster_
 
 
 '''
