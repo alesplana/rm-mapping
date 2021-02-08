@@ -3,8 +3,8 @@ import os
 import threading
 from filehndl import convert_csv
 from mpfigshow import show_fig
-from pca_kmeans import pca_initial
-from pca_kmeans import pca_final
+from pca_kmeans import pca_initial_ as pca_i
+from pca_kmeans import pca_final_ as pca_f
 
 sg.theme('SystemDefault')
 sg.SetOptions(element_padding=(1, 1))
@@ -42,11 +42,11 @@ layout = [[sg.Text('STEP 1: File processing', font=headFont)],
           [sg.Text('STEP 2: Run Principal Component Analysis', font=headFont)],
           [sg.Text('Initial PCA Run (20 components)', font=head2Font, size=(25, 1)),
            sg.Button('Initial PCA', button_color=('white', '#e7b416'), key='_PCA1_', size=(15, 1), disabled=True),
-           sg.Button('Open Fig', key='_FIG_OPEN1_', disabled=True, size=(10, 1))],
+           sg.Button('Open Scree Plot', key='_FIG_OPEN1_', disabled=True, size=(15, 1))],
           [sg.Text('Number of Principal Components:', font=head2Font, size=(25, 1)),
            sg.Combo(list(range(2, 4)), size=(5, 2), key='_NCOM_', enable_events=True),
            sg.Button('Run PCA', button_color=('white', 'green'), key='_PCA2_', size=(15, 1), disabled=True),
-            sg.Button('Open Fig', key='_FIG_OPEN2_', disabled=True, size=(10, 1), visible=False)],
+           sg.Button('Open Fig', key='_FIG_OPEN2_', disabled=True, size=(10, 1), visible=False)],
           [sg.Text('_' * 100, justification='center', text_color='gray', size=(100, 2))],  # horizontal separator
           [sg.Text('STEP 3: Cluster using K-Means', font=headFont)],
           [sg.Button('Run K-Means', key='-KMEANS-', size=(15, 1), disabled=True, button_color=('white', 'green')),
@@ -88,10 +88,10 @@ while True:
     if event == '-THREAD-' and values['-THREAD-'] == "Error 1":
         sg.popup_ok('Invalid File!', font=headFont)
     if event == '_PCA1_':
-        pca1_fig = pca_initial(new_csv)
+        pca1_fig = pca_i(new_csv)
         main_window['_FIG_OPEN1_'].update(disabled=False)
     if event == '_PCA2_':
-        scores = pca_final(new_csv, values['_NCOM_'])
+        scores = pca_f(new_csv, values['_NCOM_'])
         main_window['_FIG_OPEN2_'].update(disabled=False)
         main_window['_FIG_OPEN1_'].update(disabled=True)
         main_window['-KMEANS-'].update(disabled=False)

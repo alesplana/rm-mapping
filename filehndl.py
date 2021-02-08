@@ -1,6 +1,4 @@
 import pandas as pd
-import numpy as np
-
 '''
 convert_csv function returns a pandas dataframe with reformatted tables of the map data from raman
 return values [new_csv_final, stat]

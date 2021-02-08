@@ -25,10 +25,10 @@ from matplotlib import colors as c
 def pca_initial(data):  # Initial PCA function
 
     # read spectra id
-    lab = data.values[:, 3].astype('uint8')
+    lab = data.values[:, 2].astype('uint8')
 
     # Read the features
-    feat = (data.values[:, 4:]).astype('float32')
+    feat = (data.values[:, 3:]).astype('float32')
 
     # Initialise
     skpca1 = sk_pca(n_components=20)
@@ -62,10 +62,10 @@ def pca_initial(data):  # Initial PCA function
 def pca_initial_(data):  # Initial PCA function (no standardscaler)
 
     # read spectra id
-    lab = data.values[:, 3].astype('uint8')
+    lab = data.values[:, 2].astype('uint8')
 
     # Read the features
-    feat = (data.values[:, 4:]).astype('float32')
+    feat = (data.values[:, 3:]).astype('float32')
 
     # Initialise
     skpca1 = sk_pca(n_components=20)
@@ -99,10 +99,10 @@ def pca_initial_(data):  # Initial PCA function (no standardscaler)
 def pca_final(data, ncomp):  # PCA fitting with scores as result
 
     # read spectra id
-    lab = data.values[:, 3].astype('uint8')
+    lab = data.values[:, 2].astype('uint8')
 
     # Read the features
-    feat = (data.values[:, 4:]).astype('float32')
+    feat = (data.values[:, 3:]).astype('float32')
 
     # Scale the features to have zero mean and standard devisation of 1
     # This is important when correlating data with very different variances
@@ -120,10 +120,10 @@ def pca_final(data, ncomp):  # PCA fitting with scores as result
 def pca_final_(data, ncomp):  # PCA fitting with scores as result (no standardscaler)
 
     # read spectra id
-    lab = data.values[:, 3].astype('uint8')
+    lab = data.values[:, 2].astype('uint8')
 
     # Read the features
-    feat = (data.values[:, 4:]).astype('float32')
+    feat = (data.values[:, 3:]).astype('float32')
 
     # Scale the features to have zero mean and standard devisation of 1
     # This is important when correlating data with very different variances
