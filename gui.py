@@ -1,3 +1,5 @@
+# last edited: 02/08/2021
+
 import PySimpleGUI as sg
 import os
 import threading
@@ -5,6 +7,9 @@ from filehndl import convert_csv
 from mpfigshow import show_fig
 from pca_kmeans import pca_initial_ as pca_i
 from pca_kmeans import pca_final_ as pca_f
+from pca_kmeans import cluster_variance as kgraph_
+from pca_kmeans import kmeans_
+from pca_kmeans import gen_map
 
 sg.theme('SystemDefault')
 sg.SetOptions(element_padding=(1, 1))
@@ -41,16 +46,23 @@ layout = [[sg.Text('STEP 1: File processing', font=headFont)],
           [sg.Text('_' * 100, justification='center', text_color='gray', size=(100, 2))],  # horizontal separator
           [sg.Text('STEP 2: Run Principal Component Analysis', font=headFont)],
           [sg.Text('Initial PCA Run (20 components)', font=head2Font, size=(25, 1)),
-           sg.Button('Initial PCA', button_color=('white', '#e7b416'), key='_PCA1_', size=(15, 1), disabled=True),
-           sg.Button('Open Scree Plot', key='_FIG_OPEN1_', disabled=True, size=(15, 1))],
+           sg.Button('Open Scree Plot', button_color=('white', '#e7b416'), key='_PCA1_', size=(23, 1), disabled=True),
+           sg.Button('Open Scree Plot', key='_FIG_OPEN1_', disabled=True, size=(15, 1), visible=False)],
           [sg.Text('Number of Principal Components:', font=head2Font, size=(25, 1)),
            sg.Combo(list(range(2, 4)), size=(5, 2), key='_NCOM_', enable_events=True),
            sg.Button('Run PCA', button_color=('white', 'green'), key='_PCA2_', size=(15, 1), disabled=True),
            sg.Button('Open Fig', key='_FIG_OPEN2_', disabled=True, size=(10, 1), visible=False)],
           [sg.Text('_' * 100, justification='center', text_color='gray', size=(100, 2))],  # horizontal separator
           [sg.Text('STEP 3: Cluster using K-Means', font=headFont)],
+          [sg.Text('Identify the optimal value for k using the total distance vs k value graph.')],
+          [sg.Button('Show Graph', key='-KGRAPH-', size=(15, 1), disabled=True, button_color=('white', 'green'))],
+          [sg.Text('                             ', size=(20, 1)), ],
+          [sg.Text('K-Value:', font=head2Font, size=(7, 1)),
+           sg.Combo(list(range(1, 11)), size=(6, 2), key='_KVAL_', enable_events=True)],
           [sg.Button('Run K-Means', key='-KMEANS-', size=(15, 1), disabled=True, button_color=('white', 'green')),
            sg.Button('Open Clustered Figure', key='_FIG_OPEN3_', disabled=True, size=(20, 1))],
+          [sg.ColorChooserButton('Pick Color', key='color')],
+          [sg.Text('                             ', size=(20, 1)), ],
           [sg.Button('Exit')], ]
 
 main_window = sg.Window('EZ PCA KMeans Processor', layout, grab_anywhere=False, size=(500, 500),
@@ -89,24 +101,32 @@ while True:
         sg.popup_ok('Invalid File!', font=headFont)
     if event == '_PCA1_':
         pca1_fig = pca_i(new_csv)
-        main_window['_FIG_OPEN1_'].update(disabled=False)
+        pca1_fig.show()
     if event == '_PCA2_':
         scores = pca_f(new_csv, values['_NCOM_'])
         main_window['_FIG_OPEN2_'].update(disabled=False)
         main_window['_FIG_OPEN1_'].update(disabled=True)
         main_window['-KMEANS-'].update(disabled=False)
-#    if event == '-KMEANS-':
-
+        main_window['-KGRAPH-'].update(disabled=False)
+    if event == '-KGRAPH-':
+        kgraph_fig = kgraph_(scores)
+        kgraph_fig.show()
+    if event == '-KMEANS-':
+        res_, clc_ = kmeans_(values['_KVAL_'], scores)
+        main_window['_FIG_OPEN3_'].update(disabled=False)
+    if event == '_FIG_OPEN3_':
+        km_fig = gen_map(new_csv, res_, ['gray', 'blue', 'green', 'pink'], 100)
+        km_fig.show()
     if event == '_SAVECSV_':
-        new_csv.to_csv(values['_PCSV_'])
+        new_csv.to_csv(values['_PCSV_'], index=False)
+
     if event == '_FIG_OPEN1_':
         pca1_fig.show()
         # show_fig(pca1_fig)
     if event == '_FIG_OPEN2_':
         pca2_fig.show()
         # show_fig(pca2_fig)
-    if event == '_FIG_OPEN3_':
-        km_fig.show()
+
         # In older code you'll find it written using FindElement or Element
         # window.FindElement('-OUTPUT-').Update(values['-IN-'])
         # A shortened version of this update can be written without the ".Update"

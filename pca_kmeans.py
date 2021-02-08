@@ -1,3 +1,5 @@
+# last edited: 02/08/2021
+#
 # The functions pca_initial, pca_initial_, pca_final, and pca_final_ are adapted
 # from a post by Daniel Pelliccia here:
 # https://nirpyresearch.com/classification-nir-spectra-principal-component-analysis-python/
@@ -60,22 +62,18 @@ def pca_initial(data):  # Initial PCA function
 
 
 def pca_initial_(data):  # Initial PCA function (no standardscaler)
-
-    # read spectra id
-    lab = data.values[:, 2].astype('uint8')
-
-    # Read the features
     feat = (data.values[:, 3:]).astype('float32')
+    ncom=20
 
     # Initialise
-    skpca1 = sk_pca(n_components=20)
+    skpca1 = sk_pca(n_components=ncom)
 
-    # Scale the features to have zero mean and standard deviation of 1
+    # Scale the features to have zero mean and standard devisation of 1
     # This is important when correlating data with very different variances
     # nfeat1 = StandardScaler().fit_transform(feat)
 
     # Fit the spectral data and extract the explained variance ratio
-    X1 = skpca1.fit(feat)
+    X1 = skpca1.fit(data)
     expl_var_1 = X1.explained_variance_ratio_
 
     # create scree plot
@@ -127,7 +125,6 @@ def pca_final_(data, ncomp):  # PCA fitting with scores as result (no standardsc
 
     # Scale the features to have zero mean and standard devisation of 1
     # This is important when correlating data with very different variances
-    # nfeat1 = StandardScaler().fit_transform(feat)
 
     skpca1 = sk_pca(n_components=ncomp)
 
@@ -152,11 +149,13 @@ def cluster_variance(data_):
         variances.append(model.inertia_)
     # variances,K,n=cluster_variance(10)
 
+    fig = plt.figure(dpi=100)
     plt.plot(K, variances)
     plt.ylabel("Inertia ( Total Distance )")
     plt.xlabel("K Value")
     plt.xticks([i for i in range(1, n + 1)])
-    plt.show()
+
+    return fig
 
 
 def kmeans_(k, data):
@@ -169,8 +168,8 @@ def kmeans_(k, data):
     return result, clusters
 
 
-def gen_map(data, res_, cmap):
-    coord = pd.DataFrame(data[data.columns[1:3]])
+def gen_map(data, res_, cmap, dpi_):
+    coord = pd.DataFrame(data[data.columns[0:2]])
     coord_cluster = coord.join(res_)
     coord_cluster.columns = ['x', 'y', 'c']
 
@@ -183,7 +182,7 @@ def gen_map(data, res_, cmap):
     Y.sort()
 
     cMap = c.ListedColormap(cmap)
-    fig = plt.figure(dpi=100)
+    fig = plt.figure(dpi=dpi_)
     plt.pcolormesh(X, Y, grid_base, shading='auto', cmap=cMap, alpha=0.5, figure=fig)
     plt.gca().set_aspect('equal')
     plt.gca().invert_yaxis()
