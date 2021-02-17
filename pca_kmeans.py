@@ -1,4 +1,4 @@
-# last edited: 02/08/2021
+# last edited: 02/17/2021
 #
 # The functions pca_initial, pca_initial_, pca_final, and pca_final_ are adapted
 # from a post by Daniel Pelliccia here:
@@ -51,19 +51,13 @@ def pca_initial(data):  # Initial PCA function
     plt.plot(np.cumsum(expl_var_1), '-o', label='Cumulative variance %', color='green', figure=fig)
     plt.xlabel('PC Number')
     plt.legend()
-    '''
-    fig = matplotlib.figure.Figure(figsize=(5, 4), dpi=100)
-    fig.add_subplot(111).bar(range(20), expl_var_1, label="Explained Variance %", color='blue')
-    fig.add_subplot(111).plot(np.cumsum(expl_var_1), '-o', label='Cumulative variance %', color='green')
-    fig.add_subplot(111).set_xlabel("PC number")
-    fig.add_subplot(111).legend()
-    '''
+
     return fig
 
 
 def pca_initial_(data):  # Initial PCA function (no standardscaler)
     feat = (data.values[:, 3:]).astype('float32')
-    ncom=20
+    ncom = 20
 
     # Initialise
     skpca1 = sk_pca(n_components=ncom)
@@ -84,13 +78,7 @@ def pca_initial_(data):  # Initial PCA function (no standardscaler)
     plt.plot(np.cumsum(expl_var_1), '-o', label='Cumulative variance %', color='green', figure=fig)
     plt.xlabel('PC Number')
     plt.legend()
-    '''
-    fig = matplotlib.figure.Figure(figsize=(5, 4), dpi=100)
-    fig.add_subplot(111).bar(range(20), expl_var_1, label="Explained Variance %", color='blue')
-    fig.add_subplot(111).plot(np.cumsum(expl_var_1), '-o', label='Cumulative variance %', color='green')
-    fig.add_subplot(111).set_xlabel("PC number")
-    fig.add_subplot(111).legend()
-    '''
+
     return fig
 
 
@@ -190,7 +178,8 @@ def gen_map(data, res_, cmap, dpi_):
 
     return fig
 
-def res_vbose(data, res_,):
+
+def res_vbose(data, res_):
     res_.columns = ['cluster']
     coord = pd.DataFrame(data)
     coord_cluster_ = coord.join(res_)
@@ -198,38 +187,18 @@ def res_vbose(data, res_,):
     return coord_cluster_
 
 
-'''
-km_res = KMeans(n_clusters=2).fit(scores)
-clusters = km_res.cluster_centers_
+def clavg_fig(coord_cluster_, k, dpi_):
+    mean_cl = []
 
-plt.scatter(scores[0],scores[1])
-plt.scatter(clusters[:,0],clusters[:,1],s=10000,alpha=0.7)
+    for i in range(k):
+        mean_cl.append(np.mean(coord_cluster_.loc[coord_cluster_['cluster'] == i].iloc[:, 3:-1]) + 1 + (i * 2))
 
-y_km = KMeans(n_clusters=2).fit_predict(scores)
-plt.scatter(scores[y_km == 0][0], scores[y_km == 0][1], s=80, color='red')
-plt.scatter(scores[y_km == 1][0], scores[y_km == 1][1], s=80, color='blue')
+    fig = plt.figure(figsize=(15, 8), dpi=dpi_)
+    for i in range(k):
+        plt.plot(mean_cl[i].index.astype('float64'), mean_cl[i], label='Cluster ' + str(i), figure=fig)
+    plt.xticks(np.arange(np.min(mean_cl[0].index.astype('float64')), np.max(mean_cl[0].index.astype('float64')), 70))
+    plt.yticks([])
+    plt.subplots_adjust(right=0.8)
+    plt.legend(bbox_to_anchor=(1.04, 0.5), loc="center left", borderaxespad=0)
 
-result = pd.DataFrame(y_km)
-result.to_csv('res.csv', index=True)
-
-
-# convert to grid type data
-coord = pd.DataFrame(data[data.columns[1:3]])
-coord_cluster = coord.join(result)
-coord_cluster.columns = ['x','y','c']
-
-grid_base = coord_cluster.pivot('y','x').values
-
-X = coord_cluster.x.unique()
-X.sort()
-
-Y = coord_cluster.y.unique()
-Y.sort()
-
-cMap = c.ListedColormap(['gray', 'blue'])
-plt.pcolormesh(X, Y, grid_base, shading='auto', cmap=cMap, alpha=0.5)
-plt.gca().set_aspect('equal')
-plt.gca().invert_yaxis()
-plt.savefig('test.png', transparent=True)
-
-'''
+    return fig

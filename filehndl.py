@@ -1,6 +1,8 @@
-# last edited: 02/08/2021
+# last edited: 02/17/2021
 
 import pandas as pd
+import os
+
 '''
 convert_csv function returns a pandas dataframe with reformatted tables of the map data from raman
 return values [new_csv_final, stat]
@@ -14,20 +16,31 @@ def convert_csv(old_file):
     test_1 = pd.Index(['#X', 'Unnamed: 1', '#Y', 'Unnamed: 3', '#Wave', 'Unnamed: 5',
                        '#Intensity'])  # original file
 
-    test_csv = pd.read_csv(old_file, sep='\t', header=0)
-    test_col = test_csv.columns
+    test_2 = pd.Index(['x', 'y', 'xy_id'])  # converted file
+
+    file_ext = os.path.splitext(old_file)[1].strip().lower()
 
     try:
-        test1 = (test_col == test_1).all()
-        test2 = test_csv.iloc[:, 4:7].mean().isna().all()
+        if file_ext == '.csv':
+            test_csv = pd.read_csv(old_file)
+            test1 = (test_csv.columns[0:3] == test_2).all()
+        if file_ext == '.txt':
+            test_csv = pd.read_csv(old_file, sep='\t', header=0)
+            test1 = (test_csv.columns == test_1).all()
+            test2 = test_csv.iloc[:, 4:7].mean().isna().all()
     except ValueError:
         print('Invalid File')
         stat = 1
         new_csv_final = []
         return new_csv_final, stat
 
-    if test1 and test2:
+    if test1 and file_ext == '.csv':
         stat = 0
+        test_csv = pd.read_csv(old_file)
+        return test_csv, stat
+    elif test1 and test2 and file_ext == '.txt':
+        stat = 0
+        test_csv = pd.read_csv(old_file, sep='\t', header=0)
         test_csv.columns = ['x', 'y', 'wave', 'intensity', 'z', 'z', 'z']
         old_csv = test_csv.drop(['z'], axis=1)
         # old_csv = pd.read_csv(old_file, names=["x", "y", "wave", "intensity"])
@@ -77,7 +90,8 @@ def convert_csv(old_file):
         # merge new dataframes
         new_csv_final = pd.merge(xy_df, new_df, on=['xy_id'])
         return new_csv_final, stat
-    elif not (test_col == test_1).all() or test_csv.iloc[:, 4:7].mean().notna().all():
-        stat = 0
-        new_csv_final = {}
-        return new_csv_final, stat
+
+    #if not (test_csv.columns == test_1).all() or test_csv.iloc[:, 4:7].mean().notna().all():
+    #    stat = 0
+    #    new_csv_final = {}
+    #    return new_csv_final, stat
