@@ -132,6 +132,8 @@ while True:
         cl_avg = clavg_fig(result_csv, values['_KVAL_'], 100)
         cl_avg.show()
     if event == '_SAVECSV_':
+        new_csv.to_csv(values['_PCSV_'], index=False)
+    if event == '_SAVERES_':
         result_csv.to_csv(values['_PCSV_'], index=False)
 
     if event == '_FIG_OPEN1_':
