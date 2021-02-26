@@ -56,7 +56,7 @@ def pca_initial(data):  # Initial PCA function
 
 
 def pca_initial_(data):  # Initial PCA function (no standardscaler)
-    feat = (data.values[:, 3:]).astype('float32')
+    feat = (data.values[:, 3:]).astype('float64')
     ncom = 20
 
     # Initialise
@@ -67,7 +67,7 @@ def pca_initial_(data):  # Initial PCA function (no standardscaler)
     # nfeat1 = StandardScaler().fit_transform(feat)
 
     # Fit the spectral data and extract the explained variance ratio
-    X1 = skpca1.fit(data)
+    X1 = skpca1.fit(feat)
     expl_var_1 = X1.explained_variance_ratio_
 
     # create scree plot
@@ -104,10 +104,6 @@ def pca_final(data, ncomp):  # PCA fitting with scores as result
 
 
 def pca_final_(data, ncomp):  # PCA fitting with scores as result (no standardscaler)
-
-    # read spectra id
-    lab = data.values[:, 2].astype('uint8')
-
     # Read the features
     feat = (data.values[:, 3:]).astype('float32')
 
