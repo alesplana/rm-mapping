@@ -166,8 +166,10 @@ def gen_map(data, res_, cmap, dpi_):
     Y.sort()
 
     cMap = c.ListedColormap(cmap)
+
     fig = plt.figure(dpi=dpi_)
-    plt.pcolormesh(X, Y, grid_base, shading='auto', cmap=cMap, alpha=0.5, figure=fig)
+    plt.pcolormesh(X, Y, grid_base, shading='auto', cmap=cMap, alpha=0.7, figure=fig)
+    plt.clim(0, np.max(grid_base))
     plt.gca().set_aspect('equal')
     plt.gca().invert_yaxis()
     # plt.savefig('test.png', transparent=True)
@@ -183,7 +185,7 @@ def res_vbose(data, res_):
     return coord_cluster_
 
 
-def clavg_fig(coord_cluster_, k, dpi_):
+def clavg_fig(coord_cluster_, k, cmap, dpi_):
     mean_cl = []
 
     for i in range(k):
@@ -191,10 +193,13 @@ def clavg_fig(coord_cluster_, k, dpi_):
 
     fig = plt.figure(figsize=(15, 8), dpi=dpi_)
     for i in range(k):
-        plt.plot(mean_cl[i].index.astype('float64'), mean_cl[i], label='Cluster ' + str(i), figure=fig)
+        plt.plot(mean_cl[i].index.astype('float64'), mean_cl[i], label='Cluster ' + str(i), color=cmap[i], figure=fig)
     plt.xticks(np.arange(np.min(mean_cl[0].index.astype('float64')), np.max(mean_cl[0].index.astype('float64')), 70))
     plt.yticks([])
     plt.subplots_adjust(right=0.8)
     plt.legend(bbox_to_anchor=(1.04, 0.5), loc="center left", borderaxespad=0)
 
     return fig
+
+if __name__ == "__main__":
+    print('Program not meant to run independently.')
