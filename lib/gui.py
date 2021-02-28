@@ -13,7 +13,9 @@ from pca_kmeans import res_vbose
 from pca_kmeans import clavg_fig
 
 
-global colors, err_win1, new_csv
+colors = []
+err_win1 = 0
+new_csv = []
 sg.theme('SystemDefault')
 sg.SetOptions(element_padding=(1, 1))
 
@@ -80,7 +82,8 @@ def main_process():
               [sg.In(visible=False),
                sg.Input(key='_PCSV_', enable_events=True, visible=False),
                sg.Text('                             ', key='-FN_2-', size=(20, 1)),
-               sg.FileSaveAs("Save File As", target='_PCSV_', size=(20, 1), button_color=('white', 'green')),
+               sg.FileSaveAs("Save File As", target='_PCSV_', size=(20, 1),
+                             button_color=('white', 'green'), disabled=True, key='-PCSV-'),
                sg.Button('Save', button_color=('white', 'green'), size=(10, 1), key='_SAVECSV_', visible=False)],
               [sg.Text('_' * 100, justification='center', text_color='gray', size=(100, 2))],  # horizontal separator
               [sg.Text('STEP 2: Run Principal Component Analysis', font=headFont)],
@@ -151,6 +154,7 @@ def main_process():
             reset = 0
             thread_run = 0
             save_handl = True
+            main_window['-PCSV-'].update(disabled=False)
             main_window['_PCA1_'].update(disabled=False)
             main_window['_PCA2_'].update(disabled=False)
         if event == '-THREAD-' and values['-THREAD-'] == "Error 1":
@@ -205,6 +209,7 @@ def main_process():
             pca1_fig.show()
 
         if reset == 1:  # window reset
+            main_window['-PCSV-'].update(disabled=True)
             main_window['_PCA1_'].update(disabled=True)
             main_window['_PCA2_'].update(disabled=True)
             main_window['-KMEANS-'].update(disabled=True)

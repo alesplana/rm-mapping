@@ -24,10 +24,15 @@ def convert_csv(old_file):
         if file_ext == '.csv':
             test_csv = pd.read_csv(old_file)
             test1 = (test_csv.columns[0:3] == test_2).all()
-        if file_ext == '.txt':
+        elif file_ext == '.txt':
             test_csv = pd.read_csv(old_file, sep='\t', header=0)
             test1 = (test_csv.columns == test_1).all()
             test2 = test_csv.iloc[:, 4:7].mean().isna().all()
+        else:
+            print('File Unsupported')
+            stat = 1
+            new_csv_final = []
+            return new_csv_final, stat
     except ValueError:
         print('Invalid File')
         stat = 1
@@ -38,7 +43,8 @@ def convert_csv(old_file):
         stat = 0
         test_csv = pd.read_csv(old_file)
         return test_csv, stat
-    elif test1 and test2 and file_ext == '.txt':
+
+    if test1 and test2 and file_ext == '.txt':
         stat = 0
         test_csv = pd.read_csv(old_file, sep='\t', header=0)
         test_csv.columns = ['x', 'y', 'wave', 'intensity', 'z', 'z', 'z']

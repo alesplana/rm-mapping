@@ -25,10 +25,6 @@ from matplotlib import colors as c
 
 
 def pca_initial(data):  # Initial PCA function
-
-    # read spectra id
-    lab = data.values[:, 2].astype('uint8')
-
     # Read the features
     feat = (data.values[:, 3:]).astype('float32')
 
@@ -83,10 +79,6 @@ def pca_initial_(data):  # Initial PCA function (no standardscaler)
 
 
 def pca_final(data, ncomp):  # PCA fitting with scores as result
-
-    # read spectra id
-    lab = data.values[:, 2].astype('uint8')
-
     # Read the features
     feat = (data.values[:, 3:]).astype('float32')
 
@@ -126,7 +118,6 @@ def cluster_variance(data_):
     K = list(range(1, n + 1))
 
     for i in range(1, n + 1):
-        variance = 0
         model = KMeans(n_clusters=i, random_state=82, verbose=0).fit(data_)
         kmeans.append(model)
         variances.append(model.inertia_)
