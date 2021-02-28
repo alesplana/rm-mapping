@@ -196,6 +196,8 @@ def clavg_fig(coord_cluster_, k, cmap, dpi_):
         plt.plot(mean_cl[i].index.astype('float64'), mean_cl[i], label='Cluster ' + str(i), color=cmap[i], figure=fig)
     plt.xticks(np.arange(np.min(mean_cl[0].index.astype('float64')), np.max(mean_cl[0].index.astype('float64')), 70))
     plt.yticks([])
+    plt.ylabel("Raman Intensity (a.u.)")
+    plt.xlabel("Raman Shift (cm$^{-1}$)")
     plt.subplots_adjust(right=0.8)
     plt.legend(bbox_to_anchor=(1.04, 0.5), loc="center left", borderaxespad=0)
 

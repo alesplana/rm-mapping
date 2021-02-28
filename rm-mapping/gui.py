@@ -3,7 +3,6 @@
 import PySimpleGUI as sg
 import os
 import threading
-from mpfigshow import show_fig
 from filehndl import convert_csv
 from pca_kmeans import pca_initial_ as pca_i
 from pca_kmeans import pca_final_ as pca_f
@@ -20,7 +19,6 @@ headFont = ('Helvetica', 15, 'bold')
 head2Font = ('Helvetica', 12)
 
 sg.set_options(font=('Helvetica', 11))
-
 
 
 def open_and_convert(window, loc):  # worker thread convert csv
@@ -74,14 +72,14 @@ def main_process():
               [sg.In(visible=False),
                sg.Input(key='-DIR-', enable_events=True, visible=False),
                sg.Text('                             ', key='-FILENAME-', size=(20, 1)),
-               sg.FileBrowse('Browse', target='-DIR-', size=(15, 1),
+               sg.FileBrowse('Browse', target='-DIR-', size=(10, 1),
                              file_types=(("Text Files", "*.txt"), ("CSV Files", "*.csv"))),
-               sg.Button('Open', button_color=('white', 'red'), size=(10, 1), key='_OPEN_', disabled=True)],
+               sg.Button('Open', button_color=('white', 'red'), size=(8, 1), key='_OPEN_', disabled=True)],
               [sg.In(visible=False),
                sg.Input(key='_PCSV_', enable_events=True, visible=False),
                sg.Text('                             ', key='-FN_2-', size=(20, 1)),
-               sg.FileSaveAs("Save File As", target='_PCSV_', size=(15, 1)),
-               sg.Button('Save', button_color=('white', 'green'), size=(10, 1), key='_SAVECSV_')],
+               sg.FileSaveAs("Save File As", target='_PCSV_', size=(20, 1), button_color=('white', 'green')),
+               sg.Button('Save', button_color=('white', 'green'), size=(10, 1), key='_SAVECSV_', visible=False)],
               [sg.Text('_' * 100, justification='center', text_color='gray', size=(100, 2))],  # horizontal separator
               [sg.Text('STEP 2: Run Principal Component Analysis', font=headFont)],
               [sg.Text('Initial PCA Run (20 components)', font=head2Font, size=(25, 1)),
@@ -122,6 +120,8 @@ def main_process():
 
     reset = 0
     globals()['colors'] = []
+    thread_run = 0
+
     while True:
         event, values = main_window.read()
 
@@ -137,20 +137,23 @@ def main_process():
             main_window['_OPEN_'].update(disabled=False)
         # window event handling
         if event == sg.WIN_CLOSED or event == 'Exit':
-            exit()
+            break
         if event == '-DIR-':
             reset = 1
         if event == '_OPEN_':
-            # new_csv = convert_csv(values['-DIR-'])
-            # save_handl = True
-            reset = 0
-            threading.Thread(target=open_and_convert, args=(main_window, values['-DIR-']), daemon=True).start()
+            reset = 1
             values['-THREAD-'] = '** WAIT **'
+            thread_run = 1
+            threading.Thread(target=open_and_convert, args=(main_window, values['-DIR-']), daemon=True).start()
         if event == '-THREAD-' and values['-THREAD-'] == "** DONE **":
+            reset = 0
+            thread_run = 0
             save_handl = True
             main_window['_PCA1_'].update(disabled=False)
             main_window['_PCA2_'].update(disabled=False)
         if event == '-THREAD-' and values['-THREAD-'] == "Error 1":
+            reset = 0
+            thread_run = 0
             sg.popup_ok('Invalid File!', font=headFont)
         if event == '_PCA1_':
             pca1_fig = pca_i(new_csv)
@@ -192,7 +195,7 @@ def main_process():
         if event == '_FIG_OPEN4_':
             cl_avg = clavg_fig(result_csv, values['_KVAL_'], colors, 100)
             cl_avg.show()
-        if event == '_SAVECSV_':
+        if event == '_PCSV_':
             new_csv.to_csv(values['_PCSV_'], index=False)
         if event == '_SAVERES_':
             result_csv.to_csv(values['_PCSV_'], index=False)
@@ -206,15 +209,11 @@ def main_process():
             main_window['-KGRAPH-'].update(disabled=True)
             main_window['_FIG_OPEN3_'].update(disabled=True)
             main_window['_FIG_OPEN4_'].update(disabled=True)
-            # show_fig(pca1_fig)
-        # if event == '_FIG_OPEN2_':
-        #   pca2_fig.show()
-        #   show_fig(pca2_fig)
-
-        # In older code you'll find it written using FindElement or Element
-        # window.FindElement('-OUTPUT-').Update(values['-IN-'])
-        # A shortened version of this update can be written without the ".Update"
-        # window['-OUTPUT-'](values['-IN-'])
+        if thread_run == 1:
+            sg.PopupAnimated(sg.DEFAULT_BASE64_LOADING_GIF, background_color='white', time_between_frames=1)
+        elif thread_run == 0:
+            sg.PopupAnimated(None)
+    main_window.close()
 
 
 if __name__ == "__main__":
