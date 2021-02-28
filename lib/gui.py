@@ -12,6 +12,8 @@ from pca_kmeans import gen_map
 from pca_kmeans import res_vbose
 from pca_kmeans import clavg_fig
 
+
+global colors, err_win1, new_csv
 sg.theme('SystemDefault')
 sg.SetOptions(element_padding=(1, 1))
 
@@ -22,8 +24,8 @@ sg.set_options(font=('Helvetica', 11))
 
 
 def open_and_convert(window, loc):  # worker thread convert csv
-    global new_csv
-    new_csv, stat = convert_csv(loc)
+    # global new_csv
+    globals()['new_csv'], stat = convert_csv(loc)
     if stat == 0:
         window.write_event_value('-THREAD-', "** DONE **")
     elif stat == 1:
@@ -32,7 +34,7 @@ def open_and_convert(window, loc):  # worker thread convert csv
 
 
 def color_picker(k):
-    global colors, err_win1
+    # global colors, err_win1
     layout = [[sg.Text('Color Picker for ' + str(k) + ' cluster/s:', size=(20, 1))]]
 
     for i in range(k):
@@ -51,16 +53,16 @@ def color_picker(k):
     while True:
         event, values = window.read()
         print(event, values)
-        if event == 'Exit' or event == sg.WIN_CLOSED or event == 'Cancel':
-            err_win1 = 1
+        if event in('Exit', sg.WIN_CLOSED,'Cancel'):
+            globals()['err_win1'] = 1
             break
         if event == 'Ok':
-            colors = list(values.values())
+            globals()['colors'] = list(values.values())
             if colors.count('') > 0:
                 sg.Popup('Please pick all colors!', title='Error!')
             elif colors.count('') == 0:
                 print(colors)
-                err_win1 = 0
+                globals()['err_win1'] = 0
                 break
 
     window.close()
@@ -136,7 +138,7 @@ def main_process():
         if not fn_1 == '':
             main_window['_OPEN_'].update(disabled=False)
         # window event handling
-        if event == sg.WIN_CLOSED or event == 'Exit':
+        if event in (sg.WIN_CLOSED, 'Exit'):
             break
         if event == '-DIR-':
             reset = 1
