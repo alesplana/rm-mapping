@@ -58,10 +58,10 @@ def color_picker(k):
             break
         if event == 'Ok':
             globals()['colors'] = list(values.values())
-            if colors.count('') > 0:
+            if globals()['colors'].count('') > 0:
                 sg.Popup('Please pick all colors!', title='Error!')
-            elif colors.count('') == 0:
-                print(colors)
+            elif globals()['colors'].count('') == 0:
+                print(globals()['colors'])
                 globals()['err_win1'] = 0
                 break
 
@@ -158,11 +158,11 @@ def main_process():
             thread_run = 0
             sg.popup_ok('Invalid File!', font=headFont)
         if event == '_PCA1_':
-            pca1_fig = pca_i(new_csv)
+            pca1_fig = pca_i(globals()['new_csv'])
             pca1_fig.show()
         if event == '_PCA2_':
             try:
-                scores = pca_f(new_csv, values['_NCOM_'])
+                scores = pca_f(globals()['new_csv'], values['_NCOM_'])
                 main_window['_FIG_OPEN2_'].update(disabled=False)
                 main_window['_FIG_OPEN1_'].update(disabled=True)
                 main_window['-KMEANS-'].update(disabled=False)
@@ -177,7 +177,7 @@ def main_process():
         if event == '-KMEANS-':
             try:
                 res_, clc_ = kmeans_(values['_KVAL_'], scores)
-                result_csv = res_vbose(new_csv, res_)
+                result_csv = res_vbose(globals()['new_csv'], res_)
                 main_window['_SAVERES_'].update(disabled=False)
                 main_window['_FIG_OPEN3_'].update(disabled=False)
                 main_window['_FIG_OPEN4_'].update(disabled=False)
@@ -189,16 +189,16 @@ def main_process():
             except TypeError:
                 sg.PopupOK('Specify number of clusters!', title='Error!')
         if event == '_FIG_OPEN3_':
-            if colors.count('') > 0 or colors == []:
+            if globals()['colors'].count('') > 0 or globals()['colors'] == []:
                 sg.PopupOK('No color set. Click Pick Color button first!', title='No Colors Passed')
             else:
-                km_fig = gen_map(new_csv, res_, colors, 100)
+                km_fig = gen_map(globals()['new_csv'], res_, globals()['colors'], 100)
                 km_fig.show()
         if event == '_FIG_OPEN4_':
-            cl_avg = clavg_fig(result_csv, values['_KVAL_'], colors, 100)
+            cl_avg = clavg_fig(result_csv, values['_KVAL_'], globals()['colors'], 100)
             cl_avg.show()
         if event == '_PCSV_':
-            new_csv.to_csv(values['_PCSV_'], index=False)
+            globals()['new_csv'].to_csv(values['_PCSV_'], index=False)
         if event == '_SAVERES_':
             result_csv.to_csv(values['_PCSV_'], index=False)
         if event == '_FIG_OPEN1_':
