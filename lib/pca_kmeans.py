@@ -179,7 +179,7 @@ def clavg_fig(coord_cluster_, k, cmap, dpi_):
     mean_cl = []
 
     for i in range(k):
-        mean_cl.append(np.mean(coord_cluster_.loc[coord_cluster_['cluster'] == i].iloc[:, 3:-1]) + 1 + (i * 2))
+        mean_cl.append(np.mean(coord_cluster_.loc[coord_cluster_['cluster'] == i].iloc[:, 3:-1]) + 0.5 + (i * 1.2))
 
     fig = plt.figure(figsize=(15, 8), dpi=dpi_)
     for i in range(k):
@@ -192,6 +192,7 @@ def clavg_fig(coord_cluster_, k, cmap, dpi_):
     plt.legend(bbox_to_anchor=(1.04, 0.5), loc="center left", borderaxespad=0)
 
     return fig
+
 
 if __name__ == "__main__":
     print('Program not meant to run independently.')

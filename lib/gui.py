@@ -3,6 +3,7 @@
 import PySimpleGUI as sg
 import os
 import threading
+import random
 from filehndl import convert_csv
 from pca_kmeans import pca_initial_ as pca_i
 from pca_kmeans import pca_final_ as pca_f
@@ -11,7 +12,6 @@ from pca_kmeans import kmeans_
 from pca_kmeans import gen_map
 from pca_kmeans import res_vbose
 from pca_kmeans import clavg_fig
-
 
 colors = []
 err_win1 = 0
@@ -55,7 +55,7 @@ def color_picker(k):
     while True:
         event, values = window.read()
         print(event, values)
-        if event in('Exit', sg.WIN_CLOSED,'Cancel'):
+        if event in ('Exit', sg.WIN_CLOSED, 'Cancel'):
             globals()['err_win1'] = 1
             break
         if event == 'Ok':
@@ -181,6 +181,7 @@ def main_process():
         if event == '-KMEANS-':
             try:
                 res_, clc_ = kmeans_(values['_KVAL_'], scores)
+                print('Cluster Centers: ' + str(clc_))
                 result_csv = res_vbose(globals()['new_csv'], res_)
                 main_window['_SAVERES_'].update(disabled=False)
                 main_window['_FIG_OPEN3_'].update(disabled=False)
@@ -193,13 +194,21 @@ def main_process():
             except TypeError:
                 sg.PopupOK('Specify number of clusters!', title='Error!')
         if event == '_FIG_OPEN3_':
-            if globals()['colors'].count('') > 0 or globals()['colors'] == []:
+            if globals()['colors'].count('') > 0 or globals()['colors'] == [] or globals()['colors'].count(None) > 0:
                 sg.PopupOK('No color set. Click Pick Color button first!', title='No Colors Passed')
             else:
                 km_fig = gen_map(globals()['new_csv'], res_, globals()['colors'], 100)
                 km_fig.show()
         if event == '_FIG_OPEN4_':
-            cl_avg = clavg_fig(result_csv, values['_KVAL_'], globals()['colors'], 100)
+            if globals()['colors'].count('') > 0 or globals()['colors'] == [] or globals()['colors'].count(None) > 0:
+                color_temp = []
+                for i in range(values['_KVAL_']):
+                    r = lambda: random.randint(0,255)
+                    color = '#{:02x}{:02x}{:02x}'.format(r(), r(), r())
+                    color_temp.append(color)
+                cl_avg = clavg_fig(result_csv, values['_KVAL_'], color_temp, 100)
+            else:
+                cl_avg = clavg_fig(result_csv, values['_KVAL_'], globals()['colors'], 100)
             cl_avg.show()
         if event == '_PCSV_':
             globals()['new_csv'].to_csv(values['_PCSV_'], index=False)
