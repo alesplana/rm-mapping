@@ -203,7 +203,7 @@ def main_process():
             if globals()['colors'].count('') > 0 or globals()['colors'] == [] or globals()['colors'].count(None) > 0:
                 color_temp = []
                 for i in range(values['_KVAL_']):
-                    r = lambda: random.randint(0,255)
+                    r = random.randint(0,255)
                     color = '#{:02x}{:02x}{:02x}'.format(r(), r(), r())
                     color_temp.append(color)
                 cl_avg = clavg_fig(result_csv, values['_KVAL_'], color_temp, 100)
