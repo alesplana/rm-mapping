@@ -123,8 +123,7 @@ def cluster_variance(data_):
     n = 10
     variances = []
     kmeans = []
-    outputs = []
-    K = [i for i in range(1, n + 1)]
+    K = list(range(1, n + 1))
 
     for i in range(1, n + 1):
         variance = 0
@@ -137,7 +136,7 @@ def cluster_variance(data_):
     plt.plot(K, variances)
     plt.ylabel("Inertia ( Total Distance )")
     plt.xlabel("K Value")
-    plt.xticks([i for i in range(1, n + 1)])
+    plt.xticks(list(range(1, n + 1)))
 
     return fig
 
