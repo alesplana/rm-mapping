@@ -3,12 +3,12 @@
 import pandas as pd
 import os
 
-'''
-convert_csv function returns a pandas dataframe with reformatted tables of the map data from raman
-return values [new_csv_final, stat]
-new_csv_final - pandas dataframe
-stat - integer (0 - ok, 1 - error)
-'''
+
+# convert_csv function returns a pandas dataframe with reformatted tables of the map data from raman
+# return values [new_csv_final, stat]
+# new_csv_final - pandas dataframe
+# stat - integer (0 - ok, 1 - error)
+
 
 
 def convert_csv(old_file):
