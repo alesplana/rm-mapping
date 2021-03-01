@@ -8,6 +8,5 @@ setup(
     license='',
     author='amielesplana',
     author_email='alesplana@up.edu.ph',
-    description='Raman Mapping Tool (PCA-KMeans)',
-    install_requires=['pysimplegui', 'pandas', ]
+    description='Raman Mapping Tool (PCA-KMeans)'
 )
