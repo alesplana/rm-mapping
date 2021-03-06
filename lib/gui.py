@@ -4,14 +4,14 @@ import PySimpleGUI as sg
 import os
 import threading
 import random
-from filehndl import convert_csv
-from pca_kmeans import pca_initial_ as pca_i
-from pca_kmeans import pca_final_ as pca_f
-from pca_kmeans import cluster_variance as kgraph_
-from pca_kmeans import kmeans_
-from pca_kmeans import gen_map
-from pca_kmeans import res_vbose
-from pca_kmeans import clavg_fig
+from lib import convert_csv
+from lib import pca_initial_ as pca_i
+from lib import pca_final_ as pca_f
+from lib import cluster_variance as kgraph_
+from lib import kmeans_
+from lib import gen_map
+from lib import res_vbose
+from lib import clavg_fig
 
 colors = []
 err_win1 = 0
@@ -194,7 +194,7 @@ def main_process():
             except TypeError:
                 sg.PopupOK('Specify number of clusters!', title='Error!')
         if event == '_FIG_OPEN3_':
-            if globals()['colors'].count('') > 0 or globals()['colors'] == [] or globals()['colors'].count(None) > 0:
+            if globals()['colors'].count('') > 0 or globals()['colors'] == [] or globals()['colors'].count('None') > 0:
                 sg.PopupOK('No color set. Click Pick Color button first!', title='No Colors Passed')
             else:
                 km_fig = gen_map(globals()['new_csv'], res_, globals()['colors'], 100)
@@ -203,15 +203,15 @@ def main_process():
             if globals()['colors'].count('') > 0 or globals()['colors'] == [] or globals()['colors'].count(None) > 0:
                 color_temp = []
                 for i in range(values['_KVAL_']):
-                    r = random.randint(0,255)
-                    color = '#{:02x}{:02x}{:02x}'.format(r(), r(), r())
+                    color = '#{:02x}{:02x}{:02x}'.format(random.randint(0,255), random.randint(0,255), random.randint(0,255))
                     color_temp.append(color)
                 cl_avg = clavg_fig(result_csv, values['_KVAL_'], color_temp, 100)
             else:
                 cl_avg = clavg_fig(result_csv, values['_KVAL_'], globals()['colors'], 100)
             cl_avg.show()
         if event == '_PCSV_':
-            globals()['new_csv'].to_csv(values['_PCSV_'], index=False)
+            if not values['_PCSV_'] in ('', None):
+                globals()['new_csv'].to_csv(values['_PCSV_'], index=False)
         if event == '_SAVERES_':
             result_csv.to_csv(values['_PCSV_'], index=False)
         if event == '_FIG_OPEN1_':

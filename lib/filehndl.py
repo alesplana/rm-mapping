@@ -10,7 +10,6 @@ import os
 # stat - integer (0 - ok, 1 - error)
 
 
-
 def convert_csv(old_file):
     stat = 0
     test_1 = pd.Index(['#X', 'Unnamed: 1', '#Y', 'Unnamed: 3', '#Wave', 'Unnamed: 5',
@@ -61,7 +60,7 @@ def convert_csv(old_file):
         new_csv_final = pd.merge(xy, pv_df, on=['str'])
         return new_csv_final, stat
 
-    #if not (test_csv.columns == test_1).all() or test_csv.iloc[:, 4:7].mean().notna().all():
+    # if not (test_csv.columns == test_1).all() or test_csv.iloc[:, 4:7].mean().notna().all():
     #    stat = 0
     #    new_csv_final = {}
     #    return new_csv_final, stat
