@@ -4,6 +4,7 @@ import PySimpleGUI as sg
 import os
 import threading
 import random
+from pathlib import Path
 from lib import convert_csv
 from lib import pca_initial_ as pca_i
 from lib import pca_final_ as pca_f
@@ -92,7 +93,7 @@ def main_process():
                          disabled=True),
                sg.Button('Open Scree Plot', key='_FIG_OPEN1_', disabled=True, size=(15, 1), visible=False)],
               [sg.Text('Number of Principal Components:', font=head2Font, size=(25, 1)),
-               sg.Combo(list(range(2, 11)), size=(5, 2), key='_NCOM_', enable_events=True),
+               sg.Combo(list(range(2, 21)), size=(5, 2), key='_NCOM_', enable_events=True),
                sg.Button('Run PCA', button_color=('white', 'green'), key='_PCA2_', size=(15, 1), disabled=True),
                sg.Button('Open Fig', key='_FIG_OPEN2_', disabled=True, size=(10, 1), visible=False)],
               [sg.Text('_' * 100, justification='center', text_color='gray', size=(100, 2))],  # horizontal separator
@@ -129,10 +130,10 @@ def main_process():
 
     while True:
         event, values = main_window.read()
-
+        file_path = Path(values['-DIR-']).expanduser().resolve()
         fn_1 = os.path.basename(values['-DIR-'])
         fn_2 = os.path.basename(values['_PCSV_'])
-        print(event, values, values['_NCOM_'])
+        # print(event, values)
         main_window.element('-FILENAME-').Update(fn_1)
         main_window.element('-FN_2-').Update(fn_2)
 
@@ -180,9 +181,10 @@ def main_process():
             kgraph_fig.show()
         if event == '-KMEANS-':
             try:
-                res_, clc_ = kmeans_(values['_KVAL_'], scores)
+                res_, clc_, dist = kmeans_(values['_KVAL_'], scores)
+                res_d = res_.join(dist)
                 print('Cluster Centers: ' + str(clc_))
-                result_csv = res_vbose(globals()['new_csv'], res_)
+                result_csv = res_vbose(globals()['new_csv'], res_d)
                 main_window['_SAVERES_'].update(disabled=False)
                 main_window['_FIG_OPEN3_'].update(disabled=False)
                 main_window['_FIG_OPEN4_'].update(disabled=False)
@@ -199,6 +201,8 @@ def main_process():
             else:
                 km_fig = gen_map(globals()['new_csv'], res_, globals()['colors'], 100)
                 km_fig.show()
+                km_fig.savefig(file_path.with_suffix('.map-k' + str(values['_KVAL_']) + '.svg'), transparent=True)
+                km_fig.savefig(file_path.with_suffix('.map-k' + str(values['_KVAL_']) + '-transparent.png'), transparent=True)
         if event == '_FIG_OPEN4_':
             if globals()['colors'].count('') > 0 or globals()['colors'] == [] or globals()['colors'].count(None) > 0:
                 color_temp = []
@@ -209,9 +213,9 @@ def main_process():
             else:
                 cl_avg = clavg_fig(result_csv, values['_KVAL_'], globals()['colors'], 100)
             cl_avg.show()
-        if event == '_PCSV_':
-            if not values['_PCSV_'] in ('', None):
-                globals()['new_csv'].to_csv(values['_PCSV_'], index=False)
+            cl_avg.savefig(file_path.with_suffix('.map-k' + str(values['_KVAL_']) + '-avg.svg'))
+        if event == '_PCSV_' and not values['_PCSV_'] in ('', None):
+            globals()['new_csv'].to_csv(values['_PCSV_'], index=False)
         if event == '_SAVERES_':
             result_csv.to_csv(values['_PCSV_'], index=False)
         if event == '_FIG_OPEN1_':
@@ -229,6 +233,7 @@ def main_process():
             sg.PopupAnimated(sg.DEFAULT_BASE64_LOADING_GIF, background_color='white', time_between_frames=1)
         elif thread_run == 0:
             sg.PopupAnimated(None)
+
     main_window.close()
 
 
