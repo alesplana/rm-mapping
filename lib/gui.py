@@ -182,9 +182,10 @@ def main_process():
         if event == '-KMEANS-':
             try:
                 res_, clc_, dist = kmeans_(values['_KVAL_'], scores)
-                res_d = res_.join(dist)
+                res = res_.join(dist)
                 print('Cluster Centers: ' + str(clc_))
-                result_csv = res_vbose(globals()['new_csv'], res_d)
+                result_csv_ = res_vbose(globals()['new_csv'], res)
+                result_csv = res_vbose(globals()['new_csv'], res_)
                 main_window['_SAVERES_'].update(disabled=False)
                 main_window['_FIG_OPEN3_'].update(disabled=False)
                 main_window['_FIG_OPEN4_'].update(disabled=False)
@@ -209,7 +210,7 @@ def main_process():
                 for i in range(values['_KVAL_']):
                     color = '#{:02x}{:02x}{:02x}'.format(random.randint(0,255), random.randint(0,255), random.randint(0,255))
                     color_temp.append(color)
-                cl_avg = clavg_fig(result_csv, values['_KVAL_'], color_temp, 100)
+                cl_avg = clavg_fig(result_csv, values['_KVAL_'], color_temp, 50)
             else:
                 cl_avg = clavg_fig(result_csv, values['_KVAL_'], globals()['colors'], 100)
             cl_avg.show()
@@ -217,7 +218,7 @@ def main_process():
         if event == '_PCSV_' and not values['_PCSV_'] in ('', None):
             globals()['new_csv'].to_csv(values['_PCSV_'], index=False)
         if event == '_SAVERES_':
-            result_csv.to_csv(values['_PCSV_'], index=False)
+            result_csv_.to_csv(file_path.with_suffix('.map-k' + str(values['_KVAL_']) + '.csv'), index=False)
         if event == '_FIG_OPEN1_':
             pca1_fig.show()
 

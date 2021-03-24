@@ -137,10 +137,12 @@ def kmeans_(k, data):
     km_res = KMeans(n_clusters=k).fit(data)
     y_km = km_res.labels_
     clusters = km_res.cluster_centers_
+
     dist = km_res.transform(data)
     distance = pd.DataFrame(dist)
+
     result = pd.DataFrame(y_km)
-    result.columns = ['Clusters']
+    result.columns = ['cluster']
 
     return result, clusters, distance
 
@@ -171,7 +173,6 @@ def gen_map(data, res_, cmap, dpi_):
 
 
 def res_vbose(data, res_):
-    res_.columns = ['cluster']
     coord = pd.DataFrame(data)
     coord_cluster_ = coord.join(res_)
 
