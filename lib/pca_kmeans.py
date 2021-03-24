@@ -137,8 +137,8 @@ def kmeans_(k, data):
     km_res = KMeans(n_clusters=k).fit(data)
     y_km = km_res.labels_
     clusters = km_res.cluster_centers_
-    distance = km_res.transform(data)
-
+    dist = km_res.transform(data)
+    distance = pd.DataFrame(dist)
     result = pd.DataFrame(y_km)
     result.columns = ['Clusters']
 
