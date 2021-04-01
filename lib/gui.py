@@ -1,4 +1,4 @@
-# last edited: 02/28/2021
+# last edited: 04/01/2021
 
 import PySimpleGUI as sg
 import os
@@ -110,8 +110,7 @@ def main_process():
                sg.Button('Show Cluster Averages', key='_FIG_OPEN4_', disabled=True, size=(20, 1))],
               # [sg.ColorChooserButton('Pick Color', key='color')],
               [sg.Input(key='-DIR_RES-', enable_events=True, visible=False),
-               sg.FileSaveAs("Save Result As", target='-DIR_RES-', size=(15, 1)),
-               sg.Button('Save', button_color=('white', 'green'), size=(10, 1), key='_SAVERES_', disabled=True)],
+               sg.Button('Save Result', button_color=('white', 'green'), size=(15, 1), key='_SAVERES_', disabled=True)],
               [sg.Text('                             ', size=(20, 1)), ],
               [sg.Text('                             ', size=(20, 1)), ],
               [sg.Text('                             ', size=(20, 1)), ],
