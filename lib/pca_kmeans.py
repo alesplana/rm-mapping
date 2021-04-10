@@ -1,4 +1,4 @@
-# last edited: 02/28/2021
+# last edited: 04/10/2021
 #
 # The functions pca_initial, pca_initial_, pca_final, and pca_final_ are adapted
 # from a post by Daniel Pelliccia here:
@@ -52,7 +52,7 @@ def pca_initial(data):  # Initial PCA function
     return fig
 
 
-def pca_initial_(data):  # Initial PCA function (no standardscaler)
+def pca_initial_gui(data):  # Initial PCA function (no standardscaler)
     feat = (data.values[:, 3:]).astype('float64')
     ncom = 30
 
@@ -70,10 +70,11 @@ def pca_initial_(data):  # Initial PCA function (no standardscaler)
     # create scree plot
 
     fig = plt.figure(dpi=100, figsize=(10,5))
-    plt.bar(range(30), expl_var_1, label="Explained Variance %", color='blue', figure=fig)
+    plt.bar(range(30), expl_var_1*100, label="Explained Variance %", color='blue', figure=fig)
     plt.xticks(np.arange(len(expl_var_1)), np.arange(1, len(expl_var_1) + 1))
-    plt.plot(np.cumsum(expl_var_1), '-o', label='Cumulative variance %', color='green', figure=fig)
+    plt.plot(np.cumsum(expl_var_1)*100, '-o', label='Cumulative variance %', color='green', figure=fig)
     plt.xlabel('PC Number')
+    plt.ylabel('Explained Variance (%)')
     plt.legend()
 
     return fig
@@ -96,7 +97,7 @@ def pca_final(data, ncomp):  # PCA fitting with scores as result
     return scores
 
 
-def pca_final_(data, ncomp):  # PCA fitting with scores as result (no standardscaler)
+def pca_final_gui(data, ncomp):  # PCA fitting with scores as result (no standardscaler)
     # Read the features
     feat = (data.values[:, 3:]).astype('float32')
 
@@ -112,14 +113,14 @@ def pca_final_(data, ncomp):  # PCA fitting with scores as result (no standardsc
     return scores
 
 
-def cluster_variance(data_):
+def cluster_variance(data):
     n = 10
     variances = []
     kmeans = []
     K = list(range(1, n + 1))
 
     for i in range(1, n + 1):
-        model = KMeans(n_clusters=i, random_state=82, verbose=0).fit(data_)
+        model = KMeans(n_clusters=i, random_state=82, verbose=0).fit(data)
         kmeans.append(model)
         variances.append(model.inertia_)
     # variances,K,n=cluster_variance(10)
@@ -147,9 +148,9 @@ def kmeans_(k, data):
     return result, clusters, distance
 
 
-def gen_map(data, res_, cmap, dpi_):
+def gen_map(data, result, cmap, dpi):
     coord = pd.DataFrame(data[data.columns[0:2]])
-    coord_cluster = coord.join(res_)
+    coord_cluster = coord.join(result)
     coord_cluster.columns = ['x', 'y', 'c']
 
     grid_base = coord_cluster.pivot('y', 'x').values
@@ -162,7 +163,7 @@ def gen_map(data, res_, cmap, dpi_):
 
     cMap = c.ListedColormap(cmap)
 
-    fig = plt.figure(dpi=dpi_)
+    fig = plt.figure(dpi=dpi)
     plt.pcolormesh(X, Y, grid_base, shading='auto', cmap=cMap, alpha=0.7, figure=fig)
     plt.clim(0, np.max(grid_base))
     plt.gca().set_aspect('equal')
@@ -172,20 +173,20 @@ def gen_map(data, res_, cmap, dpi_):
     return fig
 
 
-def res_vbose(data, res_):
+def res_vbose(data, result):
     coord = pd.DataFrame(data)
-    coord_cluster_ = coord.join(res_)
+    coord_cluster_ = coord.join(result)
 
     return coord_cluster_
 
 
-def clavg_fig(coord_cluster_, k, cmap, dpi_):
+def clavg_fig(coord_cluster_, k, cmap, dpi):
     mean_cl = []
 
     for i in range(k):
         mean_cl.append(np.mean(coord_cluster_.loc[coord_cluster_['cluster'] == i].iloc[:, 3:-1]) + 0.1 + (i * 1.2))
 
-    fig = plt.figure(figsize=(15, 8), dpi=dpi_)
+    fig = plt.figure(figsize=(15, 8), dpi=dpi)
     for i in range(k):
         plt.plot(mean_cl[i].index.astype('float64'), mean_cl[i], label='Cluster ' + str(i), color=cmap[i], figure=fig)
     plt.xticks(np.arange(np.min(mean_cl[0].index.astype('float64')), np.max(mean_cl[0].index.astype('float64')), 70))

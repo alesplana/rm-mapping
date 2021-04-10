@@ -1,4 +1,4 @@
-# last edited: 02/28/2021
+# last edited: 04/10/2021
 
 import pandas as pd
 import os
@@ -15,7 +15,7 @@ def convert_csv(old_file):
     test_1 = pd.Index(['#X', 'Unnamed: 1', '#Y', 'Unnamed: 3', '#Wave', 'Unnamed: 5',
                        '#Intensity'])  # original file
 
-    test_2 = pd.Index(['x', 'y', 'xy_id'])  # converted file
+    test_2 = pd.Index(['x', 'y', 'str'])  # converted file
 
     file_ext = os.path.splitext(old_file)[1].strip().lower()
 

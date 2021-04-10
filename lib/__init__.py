@@ -1,6 +1,6 @@
 from .filehndl import convert_csv
-from .pca_kmeans import pca_initial_
-from .pca_kmeans import pca_final_
+from .pca_kmeans import pca_initial_gui as pca_initial_
+from .pca_kmeans import pca_final_gui as pca_final_
 from .pca_kmeans import cluster_variance
 from .pca_kmeans import kmeans_
 from .pca_kmeans import gen_map
