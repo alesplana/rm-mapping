@@ -201,8 +201,8 @@ def main_process():
             else:
                 km_fig = gen_map(globals()['new_csv'], res_, globals()['colors'], 100)
                 km_fig.show()
-                km_fig.savefig(file_path.with_suffix('.map-k' + str(values['_KVAL_']) + '.svg'), transparent=True)
-                km_fig.savefig(file_path.with_suffix('.map-k' + str(values['_KVAL_']) + '-transparent.png'), transparent=True)
+                km_fig.savefig(file_path.with_suffix('.map-k' + str(values['_KVAL_']) + '.svg'), transparent=True, bbox_inches='tight')
+                km_fig.savefig(file_path.with_suffix('.map-k' + str(values['_KVAL_']) + '-transparent.png'), transparent=True, bbox_inches='tight')
         if event == '_FIG_OPEN4_':
             if globals()['colors'].count('') > 0 or globals()['colors'] == [] or globals()['colors'].count(None) > 0:
                 color_temp = []
