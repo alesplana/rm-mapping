@@ -21,6 +21,7 @@ import matplotlib.pyplot as plt
 from sklearn.decomposition import PCA as sk_pca
 from sklearn.preprocessing import StandardScaler
 from sklearn.cluster import KMeans
+from sklearn.metrics import silhouette_score
 from matplotlib import colors as c
 
 
@@ -127,9 +128,34 @@ def cluster_variance(data):
 
     fig = plt.figure(dpi=100)
     plt.plot(K, variances)
-    plt.ylabel("Inertia ( Total Distance )")
+    plt.ylabel("Inertia ( SSE )")
     plt.xlabel("K Value")
     plt.xticks(list(range(1, n + 1)))
+
+    return fig
+
+
+def cluster_variance_sil(data):
+    n = 15
+    variances = []
+    kmeans = []
+    K = list(range(2, n + 1))
+
+    for i in range(2, n + 1):
+        model = KMeans(n_clusters=i, random_state=82, verbose=0).fit(data)
+        label = model.labels_
+        kmeans.append(model)
+        variances.append(model.inertia_)
+        sil_coeff = silhouette_score(data, label, metric='euclidean')
+        print("For n_clusters={}, The Silhouette Coefficient is {}".format(i, sil_coeff))
+
+    # variances,K,n=cluster_variance(10)
+
+    fig = plt.figure(dpi=100)
+    plt.plot(K, variances)
+    plt.ylabel("Inertia ( SSE )")
+    plt.xlabel("K Value")
+    plt.xticks(list(range(2, n + 1)))
 
     return fig
 
